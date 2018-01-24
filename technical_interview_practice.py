@@ -163,81 +163,97 @@ substrings = []
 ### and merge set(v_i) and set(v_j) into one set.
 
 
-# Adjacency list of our graph
-#adjacency = {'A':[('B',3), ('C',5)], 'B':[('D',4)], 'C':[('D',1)], 'D':[('D',0)]}
-adjacency = {'A':[('B',3), ('E',5), ('C',2)], 'B':[('E',1), ('C',6), ('D',4)]}
-
-# List of minimum spanning tree edges
-mst_edges = []
-
-# Adjacency list of minimum spanning tree
-mst = {}
 
 
-# Sort all edges by increasing weight.
-# Make edge weight dict {weight:(v_i, v_j)}
-edges = {}
-for key in adjacency.keys():
-	for element in adjacency[key]:
-		v1 = key
-		v2 = element[0]
-		edges[element[1]] = (v1, v2)
+### Helper function to make edge weight dictionary
+def edge_weight(G):
+	edges = {}
+	for key in G.keys():
+		for element in G[key]:
+			v1 = key
+			v2 = element[0]
+			edges[element[1]] = (v1, v2)
+	return edges 
+
 
 
 
 # Store sets for each Vertex in dictionary
-vertex = {}
-for key in adjacency.keys():
-	vertex[key] = set(key)
+def vertex_sets(G):
+	vertex = {}
+	for key in G.keys():
+		vertex[key] = set(key)
+	return vertex
+
 
 
 
 # For each edge value, if edge not in vertex dictionary key, add it
-for e in edges:
-	v1 = edges[e][0]
-	v2 = edges[e][1]
-	if v1 not in vertex.keys():
-		vertex[v1] = set(v1)
-	if v2 not in vertex.keys():
-		vertex[v2] = set(v2)
+def not_in_vertex_dict(edges, vertex):
+	for e in edges:
+		v1 = edges[e][0]
+		v2 = edges[e][1]
+		if v1 not in vertex.keys():
+			vertex[v1] = set(v1)
+		if v2 not in vertex.keys():
+			vertex[v2] = set(v2)
 
 
 
-# Apply Kruskal's algorithm.
-for i, e in enumerate(edges.keys()):
+
+def question3(G):
+	edges = edge_weight(G)
+	vertex = vertex_sets(G)
+	not_in_vertex_dict(edges, vertex)
+
+	# List of minimum spanning tree edges
+	mst_edges = []
+
+	# Adjacency list of minimum spanning tree
+	mst = {}
+
+	# Apply Kruskal's algorithm.
+	for i, e in enumerate(edges.keys()):
 
 
-	# Define two vertices
-	v1 = edges[e][0]
-	v2 = edges[e][1]
-	#print v1, v2
+		# Define two vertices
+		v1 = edges[e][0]
+		v2 = edges[e][1]
+		#print v1, v2
 
-	# If set of vertex 1 is not in set of vertex 2
-	if vertex[v1] != vertex[v2]:
+		# If set of vertex 1 is not in set of vertex 2
+		if vertex[v1] != vertex[v2]:
 
-		# Set vertex 1 equal to set of vertex 1 and vertex 2
-		# and vertex 2 equal to set of vertex 1 and vertex 2
-		#vertex[v1] = vertex[v1].union(vertex[v2])
-		#vertex[v2] = vertex[v1].union(vertex[v2])
-		merge = vertex[v1].union(vertex[v2])
+			# Merge set 1 and set 2
+			merge = vertex[v1].union(vertex[v2])
 
-		# For each vertex in merged set
-		for m in merge:
-			vertex[m] = merge
+			# For each vertex in merged set
+			# vertex set = merged set
+			for m in merge:
+				vertex[m] = merge
 
-		# Add edge to minimum spanning tree list
-		mst_edges.append((v1, v2))
+			# Add edge to minimum spanning tree list
+			mst_edges.append((v1, v2))
 
 
-		# Add edge and weight to minimum spanning tree adjacency list
-		# If v1 is not a key in the mst dictionary, add key and value
-		# If v1 is a key, append the value to the current list
-		if v1 not in mst.keys():
-			mst[v1] = [(v2, e)]
-		else:
-			mst[v1].append((v2, e))
+			# Add edge and weight to minimum spanning tree adjacency list
+			# If v1 is not a key in the mst dictionary, add key and value
+			# If v1 is a key, append the value to the current list
+			if v1 not in mst.keys():
+				mst[v1] = [(v2, e)]
+			else:
+				mst[v1].append((v2, e))
 
 
 
-print mst
+	return mst
 
+
+
+
+# Adjacency list of our graph
+adjacency = {'A':[('B',3), ('C',5)], 'B':[('D',4)], 'C':[('D',1)], 'D':[('D',0)]}
+#adjacency = {'A':[('B',3), ('E',5), ('C',2)], 'B':[('E',1), ('C',6), ('D',4)]}
+
+
+print question3(adjacency)
